@@ -5,230 +5,68 @@ import json
 
 st.set_page_config(page_title="Preferred Pace Predictor", page_icon="🤖", layout="centered")
 
-# -------------------- Theme state --------------------
-if "theme" not in st.session_state:
-    st.session_state.theme = "dark"
-
-def set_theme(t: str):
-    st.session_state.theme = t
-    st.rerun()
-
-theme = st.session_state.theme
-
-# -------------------- CSS --------------------
-if theme == "dark":
-    css_vars = """
-    :root{
-      --page-bg:#0e1117;
-      --text:#e6e6e6;
-      --muted:rgba(230,230,230,0.65);
-
-      --panel-bg:rgba(255,255,255,0.06);
-      --panel-border:rgba(255,255,255,0.14);
-
-      --card-bg:rgba(255,255,255,0.06);
-      --card-border:rgba(255,255,255,0.14);
-
-      --badge-bg:rgba(255,255,255,0.06);
-      --badge-border:rgba(255,255,255,0.18);
-
-      --advice-bg:rgba(0,128,255,0.10);
-      --advice-border:rgba(0,128,255,0.25);
-
-      --plan-bg:rgba(0,200,120,0.10);
-      --plan-border:rgba(0,200,120,0.25);
-
-      --why-bg:rgba(255,170,0,0.10);
-      --why-border:rgba(255,170,0,0.25);
-
-      --shap-bg:rgba(150,80,255,0.10);
-      --shap-border:rgba(150,80,255,0.25);
-
-      --accent:#5aa9ff;
-    }
-    """
-    css_number_fix = """
-    /* ✅ REAL FIX: Streamlit number input background is on BaseWeb wrapper, not the <input> */
-    div[data-testid="stNumberInput"] div[data-baseweb="input"] > div{
-      background: rgba(255,255,255,0.06) !important;
-      border-color: rgba(255,255,255,0.14) !important;
-      border-radius: 12px !important;
-    }
-    div[data-testid="stNumberInput"] div[data-baseweb="input"] input{
-      background: transparent !important;
-      color: #e6e6e6 !important;
-      -webkit-text-fill-color: #e6e6e6 !important;
-      caret-color: #e6e6e6 !important;
-      font-weight: 600 !important;
-    }
-    div[data-testid="stNumberInput"] div[data-baseweb="input"] input::placeholder{
-      color: rgba(230,230,230,0.55) !important;
-      -webkit-text-fill-color: rgba(230,230,230,0.55) !important;
-    }
-    """
-else:
-    css_vars = """
-    :root{
-      --page-bg:#ffffff;
-      --text:#111111;
-      --muted:rgba(0,0,0,0.55);
-
-      --panel-bg:rgba(0,0,0,0.02);
-      --panel-border:rgba(0,0,0,0.08);
-
-      --card-bg:#ffffff;
-      --card-border:rgba(0,0,0,0.10);
-
-      --badge-bg:rgba(0,0,0,0.03);
-      --badge-border:rgba(0,0,0,0.12);
-
-      --advice-bg:rgba(0,128,255,0.06);
-      --advice-border:rgba(0,128,255,0.18);
-
-      --plan-bg:rgba(0,200,120,0.06);
-      --plan-border:rgba(0,200,120,0.18);
-
-      --why-bg:rgba(255,170,0,0.06);
-      --why-border:rgba(255,170,0,0.20);
-
-      --shap-bg:rgba(150,80,255,0.06);
-      --shap-border:rgba(150,80,255,0.20);
-
-      --accent:#2563eb;
-    }
-    """
-    css_number_fix = """
-    div[data-testid="stNumberInput"] div[data-baseweb="input"] > div{
-      background: #ffffff !important;
-      border-color: rgba(0,0,0,0.10) !important;
-      border-radius: 12px !important;
-    }
-    div[data-testid="stNumberInput"] div[data-baseweb="input"] input{
-      background: transparent !important;
-      color: #111111 !important;
-      -webkit-text-fill-color: #111111 !important;
-      caret-color: #111111 !important;
-      font-weight: 600 !important;
-    }
-    """
-
-st.markdown(
-    f"""
+# -------------------- Styling (Light only) --------------------
+st.markdown("""
 <style>
-{css_vars}
+.block-container { max-width: 900px; padding-top: 1.5rem; }
 
-/* Hide Streamlit chrome */
-#MainMenu {{visibility: hidden;}}
-footer {{visibility: hidden;}}
-header {{visibility: hidden;}}
-
-.stApp {{
-  background: var(--page-bg);
-  color: var(--text);
-}}
-html, body, [class*="css"] {{
-  color: var(--text) !important;
-}}
-
-.block-container {{ max-width: 900px; padding-top: 1.5rem; }}
-
-.team-badge {{
+.team-badge {
     display: inline-block;
     padding: 0.35rem 0.75rem;
     border-radius: 999px;
     font-weight: 800;
-    border: 1px solid var(--badge-border);
-    background: var(--badge-bg);
+    border: 1px solid rgba(0,0,0,0.12);
+    background: rgba(0,0,0,0.03);
     margin-bottom: 0.75rem;
     letter-spacing: 0.5px;
-}}
+}
 
-div[data-testid="stForm"] {{
-    background: var(--panel-bg);
+div[data-testid="stForm"] {
+    background: rgba(0,0,0,0.02);
     padding: 1.25rem;
     border-radius: 16px;
-    border: 1px solid var(--panel-border);
-}}
+    border: 1px solid rgba(0,0,0,0.08);
+}
 
-div[data-testid="stMetric"] {{
-    background: var(--card-bg);
+div[data-testid="stMetric"] {
+    background: white;
     padding: 1rem;
     border-radius: 14px;
-    border: 1px solid var(--card-border);
-}}
+    border: 1px solid rgba(0,0,0,0.08);
+}
 
-.box {{
+.box {
     padding: 1rem;
     border-radius: 14px;
-    border: 1px solid var(--card-border);
-    background: var(--card-bg);
-}}
-.advice-box {{ background: var(--advice-bg); border-color: var(--advice-border); }}
-.plan-box   {{ background: var(--plan-bg);   border-color: var(--plan-border);   }}
-.why-box    {{ background: var(--why-bg);    border-color: var(--why-border);    }}
-.shap-box   {{ background: var(--shap-bg);   border-color: var(--shap-border);   }}
+    border: 1px solid rgba(0,0,0,0.12);
+}
 
-.small-note {{ color: var(--muted); font-size: 0.9rem; }}
+.advice-box { background: rgba(0, 128, 255, 0.06); border-color: rgba(0, 128, 255, 0.18); }
+.plan-box   { background: rgba(0, 200, 120, 0.06); border-color: rgba(0, 200, 120, 0.18); }
+.why-box    { background: rgba(255, 170, 0, 0.06); border-color: rgba(255, 170, 0, 0.20); }
+.shap-box   { background: rgba(150, 80, 255, 0.06); border-color: rgba(150, 80, 255, 0.20); }
 
-/* Inputs & selects */
-div[data-baseweb="select"] > div {{
-  background: var(--card-bg) !important;
-  color: var(--text) !important;
-  border-color: var(--card-border) !important;
-  border-radius: 12px !important;
-}}
-div[data-baseweb="select"] span {{
-  color: var(--text) !important;
-}}
-
-/* Buttons */
-div.stButton > button {{
-  background: var(--card-bg) !important;
-  color: var(--text) !important;
-  border: 1px solid var(--card-border) !important;
-  border-radius: 12px !important;
-  padding: 0.55rem 0.9rem !important;
-  font-weight: 700 !important;
-}}
-div.stButton > button[kind="primary"] {{
-  background: var(--accent) !important;
-  color: #ffffff !important;
-  border: 1px solid rgba(255,255,255,0.12) !important;
-}}
-
-/* +/- buttons on number inputs */
-div[data-testid="stNumberInput"] button {{
-  background: var(--card-bg) !important;
-  color: var(--text) !important;
-  border: 1px solid var(--card-border) !important;
-  border-radius: 10px !important;
-}}
-
-{css_number_fix}
+.small-note { color: rgba(0,0,0,0.55); font-size: 0.9rem; }
 </style>
-""",
-    unsafe_allow_html=True,
-)
+""", unsafe_allow_html=True)
 
 # -------------------- Helpers --------------------
 @st.cache_resource
 def load_assets():
     model = joblib.load("xgb_preferred_pace_model.pkl")
-    meta = joblib.load("xgb_preferred_pace_meta.pkl")
-    opts = json.load(open("ui_options.json", "r", encoding="utf-8"))
+    meta  = joblib.load("xgb_preferred_pace_meta.pkl")
+    opts  = json.load(open("ui_options.json", "r", encoding="utf-8"))
     return model, meta, opts
 
 def reset_all():
-    keep = {"theme"}
     for k in list(st.session_state.keys()):
-        if k not in keep:
-            del st.session_state[k]
+        del st.session_state[k]
     st.rerun()
 
 def confidence_label(p_max: float, margin: float) -> str:
-    if margin >= 0.25 or p_max >= 0.85:
+    if p_max >= 0.80 and margin >= 0.15:
         return "High"
-    if margin >= 0.12 or p_max >= 0.65:
+    if p_max >= 0.65 and margin >= 0.08:
         return "Medium"
     return "Low"
 
@@ -238,41 +76,34 @@ def advice_html(pred_label: str, collaboration: str, content: str, hours: float)
     cont = str(content).lower()
 
     items = []
+
+    # Pace
     if "struct" in pl:
-        items += [
-            "✅ Recommended pace: Structured (fixed weekly plan).",
-            "• Use a weekly schedule: topic → practice → short review.",
-            "• Use deadlines + checklist. Avoid random studying.",
-        ]
+        items.append("✅ Recommended pace: Structured (fixed weekly plan).")
+        items.append("• Use a weekly schedule: topic → practice → short review.")
+        items.append("• Use deadlines + checklist. Avoid random studying.")
     else:
-        items += [
-            "✅ Recommended pace: Self-paced (flexible plan).",
-            "• Study in shorter sessions and adjust as you progress.",
-            "• Use milestones: finish unit → quiz → move on.",
-        ]
+        items.append("✅ Recommended pace: Self-paced (flexible plan).")
+        items.append("• Study in shorter sessions and adjust as you progress.")
+        items.append("• Use milestones: finish unit → quiz → move on.")
 
+    # Collaboration
     if "group" in coll:
-        items += [
-            "👥 Collaboration: Group learning fits you.",
-            "• Do 1–2 weekly sessions with 2–4 people (problem solving).",
-        ]
+        items.append("👥 Collaboration: Group learning fits you.")
+        items.append("• Do 1–2 weekly sessions with 2–4 people (problem solving).")
     else:
-        items += [
-            "🧍 Collaboration: Solo learning fits you.",
-            "• Focus sessions + notes + self-quizzes (avoid distractions).",
-        ]
+        items.append("🧍 Collaboration: Solo learning fits you.")
+        items.append("• Focus sessions + notes + self-quizzes (avoid distractions).")
 
+    # Content style
     if "hand" in cont:
-        items += [
-            "🛠 Style: Hands-on is best.",
-            "• After each topic, do an exercise or mini-project immediately.",
-        ]
+        items.append("🛠 Style: Hands-on is best.")
+        items.append("• After each topic, do an exercise or mini-project immediately.")
     else:
-        items += [
-            "📚 Style: Theory-based is best.",
-            "• Outline key concepts first, then solve a small set of questions.",
-        ]
+        items.append("📚 Style: Theory-based is best.")
+        items.append("• Outline key concepts first, then solve a small set of questions.")
 
+    # Hours
     if hours < 6:
         items.append("⏱ Study hours: Low. Increase to ~6–10 hours/week for faster progress.")
     elif hours <= 15:
@@ -285,9 +116,17 @@ def advice_html(pred_label: str, collaboration: str, content: str, hours: float)
 
 def weekly_plan_html(label: str, hours: float) -> str:
     pl = str(label).lower()
-    hours = max(1.0, float(hours))
 
-    sessions = 3 if hours < 6 else (4 if hours <= 12 else 5)
+    if hours <= 0:
+        hours = 6
+
+    if hours < 6:
+        sessions = 3
+    elif hours <= 12:
+        sessions = 4
+    else:
+        sessions = 5
+
     hrs_per = max(1.0, round(hours / sessions, 1))
 
     if "struct" in pl:
@@ -316,12 +155,11 @@ def why_html(pred_label: str, p0: float, p1: float, collaboration: str, content:
     top = max(p0, p1) * 100
     gap = abs(p1 - p0) * 100
 
-    reasons = [
-        f"📌 Top probability = {top:.1f}% with a {gap:.1f}% gap between choices.",
-        f"📌 Collaboration preference = {collaboration}.",
-        f"📌 Preferred content = {content}.",
-        f"📌 Weekly study hours = {hours:.1f}.",
-    ]
+    reasons = []
+    reasons.append(f"📌 Top probability = {top:.1f}% with a {gap:.1f}% gap between choices.")
+    reasons.append(f"📌 Collaboration preference = {collaboration}.")
+    reasons.append(f"📌 Preferred content = {content}.")
+    reasons.append(f"📌 Weekly study hours = {hours:.1f}.")
 
     if gpa <= 1.5:
         reasons.append("📌 Low GPA often benefits from tracking (checklists + deadlines).")
@@ -344,6 +182,7 @@ def try_shap_explain(model_obj, x_raw: pd.DataFrame, top_k: int = 5):
         return False, "SHAP is not installed. Run: pip install shap", None
 
     try:
+        # Pipeline case
         if hasattr(model_obj, "named_steps"):
             transformer = None
             for _, step in model_obj.named_steps.items():
@@ -352,19 +191,26 @@ def try_shap_explain(model_obj, x_raw: pd.DataFrame, top_k: int = 5):
                     if hasattr(step, "get_feature_names_out"):
                         break
 
-            estimator = model_obj.steps[-1][1] if hasattr(model_obj, "steps") and model_obj.steps else None
+            estimator = model_obj.steps[-1][1] if hasattr(model_obj, "steps") and len(model_obj.steps) > 0 else None
+
             if transformer is None or estimator is None:
                 return False, "SHAP could not find a valid transformer/estimator in the pipeline.", None
 
             X_num = transformer.transform(x_raw)
+
             try:
-                feat_names = [str(f) for f in transformer.get_feature_names_out()]
+                feat_names = transformer.get_feature_names_out()
+                feat_names = [str(f) for f in feat_names]
             except Exception:
                 feat_names = [f"f{i}" for i in range(getattr(X_num, "shape", [0, 0])[1])]
 
             explainer = shap.TreeExplainer(estimator)
             shap_vals = explainer.shap_values(X_num)
-            shap_arr = shap_vals[1] if isinstance(shap_vals, list) and len(shap_vals) > 1 else (shap_vals[0] if isinstance(shap_vals, list) else shap_vals)
+
+            if isinstance(shap_vals, list):
+                shap_arr = shap_vals[1] if len(shap_vals) > 1 else shap_vals[0]
+            else:
+                shap_arr = shap_vals
 
             sv = np.array(shap_arr)[0]
             abs_sv = np.abs(sv)
@@ -377,19 +223,28 @@ def try_shap_explain(model_obj, x_raw: pd.DataFrame, top_k: int = 5):
             })
             return True, "OK", df
 
+        # Direct numeric model
         if any(x_raw.dtypes == "object"):
             return False, "SHAP needs numeric features. Your model likely uses preprocessing in a pipeline.", None
 
+        import numpy as np
+        import shap
+
         explainer = shap.TreeExplainer(model_obj)
         shap_vals = explainer.shap_values(x_raw)
-        shap_arr = shap_vals[1] if isinstance(shap_vals, list) and len(shap_vals) > 1 else (shap_vals[0] if isinstance(shap_vals, list) else shap_vals)
 
-        sv = __import__("numpy").array(shap_arr)[0]
-        abs_sv = __import__("numpy").abs(sv)
-        idx = __import__("numpy").argsort(abs_sv)[::-1][:top_k]
+        if isinstance(shap_vals, list):
+            shap_arr = shap_vals[1] if len(shap_vals) > 1 else shap_vals[0]
+        else:
+            shap_arr = shap_vals
+
+        sv = np.array(shap_arr)[0]
+        abs_sv = np.abs(sv)
+        idx = np.argsort(abs_sv)[::-1][:top_k]
+        feat_names = list(x_raw.columns)
 
         df = pd.DataFrame({
-            "feature": [x_raw.columns[i] for i in idx],
+            "feature": [feat_names[i] for i in idx],
             "impact": [float(sv[i]) for i in idx],
             "abs_impact": [float(abs_sv[i]) for i in idx],
         })
@@ -401,21 +256,13 @@ def try_shap_explain(model_obj, x_raw: pd.DataFrame, top_k: int = 5):
 # -------------------- Header --------------------
 st.markdown('<div class="team-badge">THE NO-SLEEP BRIGADE</div>', unsafe_allow_html=True)
 
-top_left, top_right = st.columns([0.72, 0.28])
+top_left, top_right = st.columns([0.8, 0.2])
 with top_left:
     st.title("Preferred Pace Prediction (XGBoost)")
     st.caption("Enter student profile and click Predict.")
 with top_right:
-    cA, cB, cC = st.columns([1, 1, 1])
-    with cA:
-        if st.button("☀️ Light", type=("primary" if theme == "light" else "secondary"), use_container_width=True):
-            set_theme("light")
-    with cB:
-        if st.button("🌙 Dark", type=("primary" if theme == "dark" else "secondary"), use_container_width=True):
-            set_theme("dark")
-    with cC:
-        if st.button("Reset", use_container_width=True):
-            reset_all()
+    if st.button("Reset"):
+        reset_all()
 
 model, meta, opts = load_assets()
 
@@ -425,24 +272,25 @@ with st.form("predict_form"):
 
     c1, c2, c3 = st.columns(3)
     with c1:
-        gpa = st.number_input("GPA (1.00 - 4.00)", min_value=1.0, max_value=4.0, value=3.0, step=0.01, key="gpa")
+        gpa = st.number_input("GPA (1.00 - 4.00)", min_value=1.0, max_value=4.0, value=3.0, step=0.01)
     with c2:
-        weekly_hours_num = st.number_input("Weekly Study Hours (0 - 60)", min_value=0.0, max_value=60.0, value=10.0, step=1.0, key="hours")
+        weekly_hours_num = st.number_input("Weekly Study Hours (0 - 60)", min_value=0.0, max_value=60.0, value=10.0, step=1.0)
     with c3:
-        year_num = st.number_input("Year of Study (1 - 4)", min_value=1, max_value=4, value=1, step=1, key="year")
+        year_num = st.number_input("Year of Study (1 - 4)", min_value=1, max_value=4, value=1, step=1)
 
     colA, colB = st.columns(2)
     with colA:
-        major = st.selectbox("Major", opts["major"], key="major")
-        learning_style = st.selectbox("Learning Style", opts["learning_style"], key="style")
+        major = st.selectbox("Major", opts["major"])
+        learning_style = st.selectbox("Learning Style", opts["learning_style"])
     with colB:
-        preferred_content = st.selectbox("Preferred Content", opts["preferred_content"], key="content")
-        collaboration_preference = st.selectbox("Collaboration Preference", opts["collaboration_preference"], key="collab")
+        preferred_content = st.selectbox("Preferred Content", opts["preferred_content"])
+        collaboration_preference = st.selectbox("Collaboration Preference", opts["collaboration_preference"])
 
     submitted = st.form_submit_button("Predict 🚀")
 
 # -------------------- Prediction --------------------
 if submitted:
+    # Guardrails
     if weekly_hours_num == 0:
         st.warning("Weekly Study Hours = 0. Prediction may be less reliable. Enter realistic study time if possible.")
     if gpa <= 1.05 or gpa >= 3.95:
@@ -460,6 +308,7 @@ if submitted:
         "collaboration_preference": collaboration_preference
     }])
 
+    # Ensure column order matches training
     x_one = x_one.reindex(columns=meta["feature_cols"], fill_value=pd.NA)
 
     proba = model.predict_proba(x_one)[0]
@@ -469,25 +318,27 @@ if submitted:
         class0 = le.inverse_transform([0])[0]
         class1 = le.inverse_transform([1])[0]
     else:
-        class0, class1 = "Class 0", "Class 1"
+        class0, class1 = "Self-paced", "Structured"
 
     p0 = float(proba[0])
     p1 = float(proba[1])
 
     thr = float(meta.get("best_threshold", 0.5))
     pred = 1 if p1 >= thr else 0
-    pred_label = le.inverse_transform([pred])[0] if le is not None else str(pred)
+    pred_label = le.inverse_transform([pred])[0] if le is not None else (class1 if pred == 1 else class0)
 
     p0_pct = round(p0 * 100, 1)
     p1_pct = round(p1 * 100, 1)
 
+    p_max = max(p0, p1)
     margin = abs(p1 - p0)
-    conf = confidence_label(max(p0, p1), margin)
+    conf = confidence_label(p_max, margin)
 
     st.success(f"Prediction: **{pred_label}**")
 
-    borderline = margin < 0.10
-    if borderline:
+    if abs(p1 - p0) < 0.10:
+        st.info("Borderline case: both learning paces are plausible for this profile.")
+    if conf == "Low":
         st.warning("Low confidence: probabilities are close. Treat this as a borderline recommendation.")
 
     m1, m2, m3 = st.columns(3)
@@ -500,7 +351,7 @@ if submitted:
     st.markdown(f"<div class='box advice-box'>{advice_html(pred_label, collaboration_preference, preferred_content, weekly_hours_num)}</div>", unsafe_allow_html=True)
 
     st.markdown("## Recommended Weekly Plan")
-    if borderline:
+    if conf == "Low":
         tab1, tab2 = st.tabs(["Structured plan", "Self-paced plan"])
         with tab1:
             st.markdown(f"<div class='box plan-box'>{weekly_plan_html('Structured', weekly_hours_num)}</div>", unsafe_allow_html=True)
@@ -538,7 +389,6 @@ Inputs:
 
     st.markdown("## SHAP Explanation (Bonus)")
     ok, msg, df_top = try_shap_explain(model, x_one, top_k=5)
-
     if ok and df_top is not None and len(df_top) > 0:
         st.markdown("<div class='box shap-box'><b>Top features affecting this prediction:</b></div>", unsafe_allow_html=True)
         st.dataframe(df_top[["feature", "impact", "abs_impact"]], use_container_width=True)
