@@ -1,0 +1,44 @@
+{
+  "major": [
+    "Arts and Humanities",
+    "Business Administration",
+    "Engineering",
+    "Medicine",
+    "Natural Sciences",
+    "Other",
+    "Social Sciences"
+  ],
+  "learning_style": [
+    "Auditory",
+    "Kinesthetic",
+    "Reading/Writing",
+    "Visual"
+  ],
+  "preferred_content": [
+    "Hands-on",
+    "Interactive",
+    "Text",
+    "Video"
+  ],
+  "collaboration_preference": [
+    "Group",
+    "Individual"
+  ],
+  "num_stats": {
+    "gpa": {
+      "min": -2.541417432764304,
+      "max": 2.43655981881746,
+      "mean": 1.8118052020490359e-16
+    },
+    "weekly_hours_num": {
+      "min": -1.6573217109825351,
+      "max": 1.8326554940083952,
+      "mean": -1.0240638098538029e-16
+    },
+    "year_num": {
+      "min": -1.5636326667840317,
+      "max": 3.169242049454883,
+      "mean": 4.332577657073782e-17
+    }
+  }
+}
